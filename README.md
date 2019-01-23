@@ -3,20 +3,16 @@ A list of useful configuration files for bootstrapping phaser projects.
 
 
 ## Typings
-If you want code suggestion for Phaserjs and other libraries, just copy the defs folder and the `jsconfig.json` file inside your project. VSCode will automatically suggest syntax
+If you want code suggestion for Phaserjs and other libraries, just copy the defs folder file inside your project. VSCode will automatically suggest syntax.
+
 
 ## ESLint
-ESLint configuration file for VSCode.
-
-* Install the [ESLint Extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-* Copy the `.eslintrc.json` file in your project. You can also put the eslintrc file in the parent folder to share the configuration between projects.
-
-
-You will need some extra module
-```bash
-npm install -g eslint
-npm install -g eslint-config-airbnb
-npm install -g eslint-plugin-jsx-a11y
-npm install -g eslint-plugin-react
-npm install -g eslint-plugin-import
-```
+For styling we need to use ESLint following this tutorial steps.
+1. cd workspace-directory
+2. npm init -y
+3. npm i -D eslint eslint-config-airbnb-base eslint-plugin-import
+4. Copy `.eslintrc.js` from this repository into `workspace-directory`
+5. In VS Code, Ctrl + Shift + X
+6. Search ESLint
+7. Install ESLint
+8. Restart VS Code
