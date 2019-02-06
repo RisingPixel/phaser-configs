@@ -1,4 +1,4 @@
-// Type definitions for PIXI with Phaser Deviations. 
+// Type definitions for PIXI with Phaser Deviations.
 
 declare module PIXI {
 
@@ -37,39 +37,14 @@ declare module PIXI {
 
     }
 
-    export var defaultRenderOptions: PixiRendererOptions;
-
-    export var INTERACTION_REQUENCY: number;
-    export var AUTO_PREVENT_DEFAULT: boolean;
-
-    export var PI_2: number;
-    export var RAD_TO_DEG: number;
-    export var DEG_TO_RAD: number;
-
-    export var RETINA_PREFIX: string;
-    export var identityMatrix: Matrix;
     export var glContexts: WebGLRenderingContext[];
     export var instances: any[];
 
     export var TextureSilentFail: boolean;
-    export var BitmapText: { fonts: {} };
-
-    export function isPowerOfTwo(width: number, height: number): boolean;
-
-    export function rgb2hex(rgb: number[]): string;
-    export function hex2rgb(hex: string): number[];
-
-    export function autoDetectRenderer(width?: number, height?: number, options?: PixiRendererOptions): PixiRenderer;
-    export function autoDetectRecommendedRenderer(width?: number, height?: number, options?: PixiRendererOptions): PixiRenderer;
 
     export function canUseNewCanvasBlendModes(): boolean;
-    export function getNextPowerOfTwo(value: number): number;
-
-    export function AjaxRequest(): XMLHttpRequest;
 
     export function CompileFragmentShader(gl: WebGLRenderingContext, shaderSrc: string[]): any;
-    export function CompileProgram(gl: WebGLRenderingContext, vertexSrc: string[], fragmentSrc: string[]): any;
-
 
     export interface IEventCallback {
         (e?: IEvent): void;
@@ -176,21 +151,9 @@ declare module PIXI {
 
     }
 
-
-    /**
-    * This is the base class for creating a PIXI filter. Currently only webGL supports filters.
-    * If you want to make a custom filter this should be your base class.
-    */
+    // Phaser.Filter is used instead
     export class AbstractFilter {
 
-
-        /**
-        * This is the base class for creating a PIXI filter. Currently only webGL supports filters.
-        * If you want to make a custom filter this should be your base class.
-        * 
-        * @param fragmentSrc The fragment source in an array of strings.
-        * @param uniforms An object containing the uniforms for this filter.
-        */
         constructor(fragmentSrc: string | string[], uniforms: any);
 
         dirty: boolean;
@@ -199,71 +162,7 @@ declare module PIXI {
         fragmentSrc: string | string[];
 
         apply(frameBuffer: WebGLFramebuffer): void;
-
-        /**
-        * Syncs the uniforms between the class object and the shaders.
-        */
         syncUniforms(): void;
-
-    }
-
-    export class AlphaMaskFilter extends AbstractFilter {
-
-        constructor(texture: Texture);
-
-        map: Texture;
-
-        onTextureLoaded(): void;
-
-    }
-
-    export class AsciiFilter extends AbstractFilter {
-
-        size: number;
-
-    }
-
-    export class AssetLoader implements Mixin {
-
-        assetURLs: string[];
-        crossorigin: boolean;
-        loadersByType: { [key: string]: Loader };
-
-        constructor(assetURLs: string[], crossorigin: boolean);
-
-        listeners(eventName: string): Function[];
-        emit(eventName: string, data?: any): boolean;
-        dispatchEvent(eventName: string, data?: any): boolean;
-        on(eventName: string, fn: Function): Function;
-        addEventListener(eventName: string, fn: Function): Function;
-        once(eventName: string, fn: Function): Function;
-        off(eventName: string, fn: Function): Function;
-        removeAllEventListeners(eventName: string): void;
-
-        load(): void;
-
-
-    }
-
-    export class AtlasLoader implements Mixin {
-
-        url: string;
-        baseUrl: string;
-        crossorigin: boolean;
-        loaded: boolean;
-
-        constructor(url: string, crossorigin: boolean);
-
-        listeners(eventName: string): Function[];
-        emit(eventName: string, data?: any): boolean;
-        dispatchEvent(eventName: string, data?: any): boolean;
-        on(eventName: string, fn: Function): Function;
-        addEventListener(eventName: string, fn: Function): Function;
-        once(eventName: string, fn: Function): Function;
-        off(eventName: string, fn: Function): Function;
-        removeAllEventListeners(eventName: string): void;
-
-        load(): void;
 
     }
 
@@ -279,6 +178,7 @@ declare module PIXI {
         * 
         * @param canvas The canvas element source of the texture
         * @param scaleMode See {{#crossLink "PIXI/scaleModes:property"}}PIXI.scaleModes{{/crossLink}} for possible values
+        * @param resolution the resolution of the texture (for HiDPI displays)
         */
         static fromCanvas(canvas: HTMLCanvasElement, scaleMode?: scaleModes): BaseTexture;
 
@@ -288,6 +188,7 @@ declare module PIXI {
         * 
         * @param source the source object (image or canvas)
         * @param scaleMode See {{#crossLink "PIXI/scaleModes:property"}}PIXI.scaleModes{{/crossLink}} for possible values
+        * @param resolution the resolution of the texture (for HiDPI displays)
         */
         constructor(source: HTMLImageElement, scaleMode: scaleModes);
 
@@ -296,6 +197,7 @@ declare module PIXI {
         * 
         * @param source the source object (image or canvas)
         * @param scaleMode See {{#crossLink "PIXI/scaleModes:property"}}PIXI.scaleModes{{/crossLink}} for possible values
+        * @param resolution the resolution of the texture (for HiDPI displays)
         */
         constructor(source: HTMLCanvasElement, scaleMode: scaleModes);
 
@@ -347,6 +249,11 @@ declare module PIXI {
         source: HTMLImageElement;
 
         /**
+        * The multi texture batching index number.
+        */
+        textureIndex: number;
+
+        /**
         * [read-only] The width of the base texture set when the image has loaded
         */
         width: number;
@@ -365,8 +272,8 @@ declare module PIXI {
         * Then calls BaseTexture.dirty.
         * Important for when you don't want to modify the source object by forcing in `complete` or dimension properties it may not have.
         * 
-        * @param width - The new width to force the BaseTexture to be.
-        * @param height - The new height to force the BaseTexture to be.
+        * @param width The new width to force the BaseTexture to be.
+        * @param height The new height to force the BaseTexture to be.
         */
         forceLoaded(width: number, height: number): void;
 
@@ -385,48 +292,6 @@ declare module PIXI {
         * Atexture is still 100% usable and will simply be reuploaded if there is a sprite on screen that is using it.
         */
         unloadFromGPU(): void;
-
-    }
-
-    export class BitmapFontLoader implements Mixin {
-
-        constructor(url: string, crossorigin: boolean);
-
-        baseUrl: string;
-        crossorigin: boolean;
-        texture: Texture;
-        url: string;
-
-        listeners(eventName: string): Function[];
-        emit(eventName: string, data?: any): boolean;
-        dispatchEvent(eventName: string, data?: any): boolean;
-        on(eventName: string, fn: Function): Function;
-        addEventListener(eventName: string, fn: Function): Function;
-        once(eventName: string, fn: Function): Function;
-        off(eventName: string, fn: Function): Function;
-        removeAllEventListeners(eventName: string): void;
-
-        load(): void;
-
-    }
-
-    export class BlurFilter extends AbstractFilter {
-
-        blur: number;
-        blurX: number;
-        blurY: number;
-
-    }
-
-    export class BlurXFilter extends AbstractFilter {
-
-        blur: number;
-
-    }
-
-    export class BlurYFilter extends AbstractFilter {
-
-        blur: number;
 
     }
 
@@ -489,56 +354,6 @@ declare module PIXI {
 
 
     /**
-    * The CanvasPool is a global static object that allows Pixi and Phaser to pool canvas DOM elements.
-    */
-    export class CanvasPool {
-
-
-        /**
-        * Creates a new Canvas DOM element, or pulls one from the pool if free.
-        * 
-        * @param parent The parent of the canvas element.
-        * @param width The width of the canvas element.
-        * @param height The height of the canvas element.
-        * @return The canvas element.
-        */
-        static create(parent: HTMLElement, width?: number, height?: number): HTMLCanvasElement;
-
-        /**
-        * Gets the first free canvas index from the pool.
-        */
-        static getFirst(): HTMLCanvasElement;
-
-        /**
-        * Removes the parent from a canvas element from the pool, freeing it up for re-use.
-        * 
-        * @param parent The parent of the canvas element.
-        */
-        static remove(parent: HTMLElement): void;
-
-        /**
-        * Removes the parent from a canvas element from the pool, freeing it up for re-use.
-        * 
-        * @param canvas The canvas element to remove
-        */
-        static removeByCanvas(canvas: HTMLCanvasElement): HTMLCanvasElement;
-
-        /**
-        * Gets the total number of used canvas elements in the pool.
-        * @return The number of in-use (parented) canvas elements in the pool.
-        */
-        static getTotal(): number;
-
-        /**
-        * Gets the total number of free canvas elements in the pool.
-        * @return The number of free (un-parented) canvas elements in the pool.
-        */
-        static getFree(): number;
-
-    }
-
-
-    /**
     * A set of functions used to handle masking.
     */
     export class CanvasMaskManager {
@@ -577,6 +392,10 @@ declare module PIXI {
         */
         constructor(game: Phaser.Game);
 
+
+        /**
+        * A reference to the Phaser Game instance.
+        */
         game: Phaser.Game;
 
         /**
@@ -638,6 +457,10 @@ declare module PIXI {
         * Internal var.
         */
         count: number;
+
+        /**
+        * Instance of a PIXI.CanvasMaskManager, handles masking when using the canvas renderer
+        */
         maskManager: CanvasMaskManager;
 
         /**
@@ -660,6 +483,7 @@ declare module PIXI {
         * @param height the new height of the canvas view
         */
         resize(width: number, height: number): void;
+        setTexturePriority(textureNameCollection: string[]): string[];
 
         /**
         * Removes everything from the renderer and optionally removes the Canvas DOM element.
@@ -697,107 +521,239 @@ declare module PIXI {
         static tintWithOverlay(texture: Texture, color: number, canvas: HTMLCanvasElement): void;
         static tintWithPerPixel(texture: Texture, color: number, canvas: HTMLCanvasElement): void;
 
-
-        /**
-        * Whether or not the Canvas BlendModes are supported, consequently the ability to tint using the multiply method.
-        */
         static canUseMultiply: boolean;
         static tintMethod: any;
 
     }
 
-    export class Circle implements HitArea {
 
-        constructor(x: number, y: number, radius: number);
-
-        x: number;
-        y: number;
-        radius: number;
-
-        clone(): Circle;
-        contains(x: number, y: number): boolean;
-        getBounds(): Rectangle;
-
-    }
-
-    export class ColorMatrixFilter extends AbstractFilter {
-
-        constructor();
-
-        matrix: number[];
-
-    }
-
-    export class ColorStepFilter extends AbstractFilter {
-
-        step: number;
-
-    }
-
-    export class ConvolutionFilter extends AbstractFilter {
-
-        constructor(matrix: number[], width: number, height: number);
-
-        matrix: Matrix;
-        width: number;
-        height: number;
-
-    }
-
-    export class CrossHatchFilter extends AbstractFilter {
-
-        blur: number;
-
-    }
-
-    export class DisplacementFilter extends AbstractFilter {
-
-        constructor(texture: Texture);
-
-        map: Texture;
-        offset: Point;
-        scale: Point;
-
-    }
-
-    export class DotScreenFilter extends AbstractFilter {
-
-        angle: number;
-        scale: Point;
-
-    }
-
+    /**
+    * The base class for all objects that are rendered. Contains properties for position, scaling,
+    * rotation, masks and cache handling.
+    * 
+    * This is an abstract class and should not be used on its own, rather it should be extended.
+    * 
+    * It is used internally by the likes of PIXI.Sprite.
+    */
     export class DisplayObject {
 
+
+        /**
+        * The alpha value of this DisplayObject. A value of 1 is fully opaque. A value of 0 is transparent.
+        * Please note that an object with an alpha value of 0 is skipped during the render pass.
+        * 
+        * The value of this property does not reflect any alpha values set further up the display list.
+        * To obtain that value please see the `worldAlpha` property.
+        * Default: 1
+        */
         alpha: number;
         buttonMode: boolean;
+
+        /**
+        * Sets if this DisplayObject should be cached as a bitmap.
+        * 
+        * When invoked it will take a snapshot of the DisplayObject, as it is at that moment, and store it
+        * in a RenderTexture. This is then used whenever this DisplayObject is rendered. It can provide a
+        * performance benefit for complex, but static, DisplayObjects. I.e. those with lots of children.
+        * 
+        * Transparent areas adjoining the edges may be removed ({@link https://github.com/photonstorm/phaser-ce/issues/283 #283}).
+        * 
+        * Cached Bitmaps do not track their parents. If you update a property of this DisplayObject, it will not
+        * re-generate the cached bitmap automatically. To do that you need to call `DisplayObject.updateCache`.
+        * 
+        * To remove a cached bitmap, set this property to `null`. Cache this DisplayObject as a Bitmap. Set to `null` to remove an existing cached bitmap.
+        */
         cacheAsBitmap: boolean;
         defaultCursor: string;
+
+        /**
+        * The rectangular area used by filters when rendering a shader for this DisplayObject.
+        */
         filterArea: Rectangle;
+
+        /**
+        * Sets the filters for this DisplayObject. This is a WebGL only feature, and is ignored by the Canvas
+        * Renderer. A filter is a shader applied to this DisplayObject. You can modify the placement of the filter
+        * using `DisplayObject.filterArea`.
+        * 
+        * To remove filters, set this property to `null`.
+        * 
+        * Note: You cannot have a filter set, and a MULTIPLY Blend Mode active, at the same time. Setting a
+        * filter will reset this DisplayObjects blend mode to NORMAL. An Array of Phaser.Filter objects, or objects that extend them.
+        */
         filters: AbstractFilter[];
+
+        /**
+        * This is the defined area that will pick up mouse / touch events. It is null by default.
+        * Setting it is a neat way of optimising the hitTest function that the interactionManager will use (as it will not need to hit test all the children)
+        */
         hitArea: HitArea;
         interactive: boolean;
-        mask: Graphics;
+
+        /**
+        * Sets a mask for this DisplayObject. A mask is an instance of a Graphics object.
+        * When applied it limits the visible area of this DisplayObject to the shape of the mask.
+        * Under a Canvas renderer it uses shape clipping. Under a WebGL renderer it uses a Stencil Buffer.
+        * To remove a mask, set this property to `null`. The mask applied to this DisplayObject. Set to `null` to remove an existing mask.
+        */
+        mask: Phaser.Graphics;
+
+        /**
+        * The parent DisplayObjectContainer that this DisplayObject is a child of.
+        * All DisplayObjects must belong to a parent in order to be rendered.
+        * The root parent is the Stage object. This property is set automatically when the
+        * DisplayObject is added to, or removed from, a DisplayObjectContainer.
+        */
         parent: DisplayObjectContainer;
+
+        /**
+        * The pivot point of this DisplayObject that it rotates around. The values are expressed
+        * in pixel values.
+        */
         pivot: Point;
+
+        /**
+        * The coordinates, in pixels, of this DisplayObject, relative to its parent container.
+        * 
+        * The value of this property does not reflect any positioning happening further up the display list.
+        * To obtain that value please see the `worldPosition` property.
+        */
         position: Point;
+
+        /**
+        * Should this DisplayObject be rendered by the renderer? An object with a renderable value of
+        * `false` is skipped during the render pass.
+        */
         renderable: boolean;
+
+        /**
+        * The rotation of this DisplayObject. The value is given, and expressed, in radians, and is based on
+        * a right-handed orientation.
+        * 
+        * The value of this property does not reflect any rotation happening further up the display list.
+        * To obtain that value please see the `worldRotation` property.
+        */
         rotation: number;
+
+        /**
+        * The scale of this DisplayObject. A scale of 1:1 represents the DisplayObject
+        * at its default size. A value of 0.5 would scale this DisplayObject by half, and so on.
+        * 
+        * The value of this property does not reflect any scaling happening further up the display list.
+        * To obtain that value please see the `worldScale` property.
+        */
         scale: Point;
         stage: DisplayObjectContainer;
+
+        /**
+        * The visibility of this DisplayObject. A value of `false` makes the object invisible.
+        * A value of `true` makes it visible.
+        * 
+        * An object with a visible value of `false` is skipped during the render pass.
+        * Equally a DisplayObject with visible `false` will not render any of its children.
+        * 
+        * The value of this property does not reflect any visible values set further up the display list.
+        * To obtain that value please see the {@link PIXI.DisplayObject#worldVisible worldVisible} property.
+        * 
+        * Objects that are not {@link PIXI.DisplayObject#worldVisible worldVisible} do not update their {@link PIXI.DisplayObject#worldPosition worldPosition}.
+        * Default: true
+        */
         visible: boolean;
+
+        /**
+        * The multiplied alpha value of this DisplayObject. A value of 1 is fully opaque. A value of 0 is transparent.
+        * This value is the calculated total, based on the alpha values of all parents of this DisplayObjects
+        * in the display list.
+        * 
+        * To obtain, and set, the local alpha value, see the `alpha` property.
+        * 
+        * Note: This property is only updated at the end of the `updateTransform` call, once per render. Until
+        * that happens this property will contain values based on the previous frame. Be mindful of this if
+        * accessing this property outside of the normal game flow, i.e. from an asynchronous event callback.
+        */
         worldAlpha: number;
+
+        /**
+        * The coordinates, in pixels, of this DisplayObject within the world.
+        * 
+        * This property contains the calculated total, based on the positions of all parents of this
+        * DisplayObject in the display list.
+        * 
+        * Note: This property is only updated at the end of the `updateTransform` call, once per render. Until
+        * that happens this property will contain values based on the previous frame. Be mindful of this if
+        * accessing this property outside of the normal game flow, i.e. from an asynchronous event callback.
+        */
         worldPosition: Point;
+
+        /**
+        * The global scale of this DisplayObject.
+        * 
+        * This property contains the calculated total, based on the scales of all parents of this
+        * DisplayObject in the display list.
+        * 
+        * Note: This property is only updated at the end of the `updateTransform` call, once per render. Until
+        * that happens this property will contain values based on the previous frame. Be mindful of this if
+        * accessing this property outside of the normal game flow, i.e. from an asynchronous event callback.
+        */
         worldScale: Point;
+
+        /**
+        * The current transform of this DisplayObject.
+        * 
+        * This property contains the calculated total, based on the transforms of all parents of this
+        * DisplayObject in the display list.
+        * 
+        * Note: This property is only updated at the end of the `updateTransform` call, once per render. Until
+        * that happens this property will contain values based on the previous frame. Be mindful of this if
+        * accessing this property outside of the normal game flow, i.e. from an asynchronous event callback.
+        */
         worldTransform: Matrix;
+
+        /**
+        * The rotation, in radians, of this DisplayObject.
+        * 
+        * This property contains the calculated total, based on the rotations of all parents of this
+        * DisplayObject in the display list.
+        * 
+        * Note: This property is only updated at the end of the `updateTransform` call, once per render. Until
+        * that happens this property will contain values based on the previous frame. Be mindful of this if
+        * accessing this property outside of the normal game flow, i.e. from an asynchronous event callback.
+        */
         worldRotation: number;
+
+        /**
+        * Indicates if this DisplayObject is visible, based on it, and all of its parents, `visible` property values.
+        */
         worldVisible: boolean;
+
+        /**
+        * The horizontal position of the DisplayObject, in pixels, relative to its parent.
+        * If you need the world position of the DisplayObject, use `DisplayObject.worldPosition` instead.
+        */
         x: number;
+
+        /**
+        * The vertical position of the DisplayObject, in pixels, relative to its parent.
+        * If you need the world position of the DisplayObject, use `DisplayObject.worldPosition` instead.
+        */
         y: number;
 
         click(e: InteractionData): void;
         displayObjectUpdateTransform(parent?: DisplayObjectContainer): void;
-        generateTexture(resolution?: number, scaleMode?: number, renderer?: PixiRenderer | number): RenderTexture;
+
+        /**
+        * Generates a RenderTexture based on this DisplayObject, which can they be used to texture other Sprites.
+        * This can be useful if your DisplayObject is static, or complicated, and needs to be reused multiple times.
+        * 
+        * Please note that no garbage collection takes place on old textures. It is up to you to destroy old textures,
+        * and references to them, so they don't linger in memory.
+        * 
+        * @param resolution The resolution of the texture being generated. - Default: 1
+        * @param scaleMode See {{#crossLink "PIXI/scaleModes:property"}}PIXI.scaleModes{{/crossLink}} for possible values. - Default: PIXI.scaleModes.DEFAULT
+        * @param renderer The renderer used to generate the texture.
+        * @return - A RenderTexture containing an image of this DisplayObject at the time it was invoked.
+        */
+        generateTexture(resolution?: number, scaleMode?: number, renderer?: PixiRenderer | number): Phaser.RenderTexture;
         mousedown(e: InteractionData): void;
         mouseout(e: InteractionData): void;
         mouseover(e: InteractionData): void;
@@ -810,13 +766,53 @@ declare module PIXI {
         rightupoutside(e: InteractionData): void;
         setStageReference(stage: DisplayObjectContainer): void;
         tap(e: InteractionData): void;
+
+        /**
+        * Calculates the global position of this DisplayObject, based on the position given.
+        * 
+        * @param position The global position to calculate from.
+        * @return - A point object representing the position of this DisplayObject based on the global position given.
+        */
         toGlobal(position: Point): Point;
+
+        /**
+        * Calculates the local position of this DisplayObject, relative to another point.
+        * 
+        * @param position The world origin to calculate from.
+        * @param from An optional DisplayObject to calculate the global position from.
+        * @return - A point object representing the position of this DisplayObject based on the global position given.
+        */
         toLocal(position: Point, from: DisplayObject): Point;
         touchend(e: InteractionData): void;
         touchendoutside(e: InteractionData): void;
         touchstart(e: InteractionData): void;
         touchmove(e: InteractionData): void;
+
+        /**
+        * Updates the transform matrix this DisplayObject uses for rendering.
+        * 
+        * If the object has no parent, and no parent parameter is provided, it will default to
+        * Phaser.Game.World as the parent transform to use. If that is unavailable the transform fails to take place.
+        * 
+        * The `parent` parameter has priority over the actual parent. Use it as a parent override.
+        * Setting it does **not** change the actual parent of this DisplayObject.
+        * 
+        * Calling this method updates the `worldTransform`, `worldAlpha`, `worldPosition`, `worldScale`
+        * and `worldRotation` properties.
+        * 
+        * If a `transformCallback` has been specified, it is called at the end of this method, and is passed
+        * the new, updated, worldTransform property, along with the parent transform used.
+        * 
+        * @param parent Optional parent to calculate this DisplayObjects transform from.
+        * @return - A reference to this DisplayObject.
+        */
         updateTransform(parent?: DisplayObjectContainer): void;
+
+        /**
+        * If this DisplayObject has a cached Sprite, this method generates and updates it.
+        * @return - A reference to this DisplayObject.
+        */
+        updateCache(): void;
 
     }
 
@@ -943,99 +939,17 @@ declare module PIXI {
         /**
         * Swaps the position of 2 Display Objects within this container.
         * 
-        * @param child -
-        * @param child2 -
+        * @param child
+        * @param child2
         */
         swapChildren(child: DisplayObject, child2: DisplayObject): void;
 
         /**
         * Determines whether the specified display object is a child of the DisplayObjectContainer instance or the instance itself.
         * 
-        * @param child -
+        * @param child
         */
         contains(child: DisplayObject): boolean;
-
-    }
-
-    export class Ellipse implements HitArea {
-
-        constructor(x: number, y: number, width: number, height: number);
-
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-
-        clone(): Ellipse;
-        contains(x: number, y: number): boolean;
-        getBounds(): Rectangle;
-
-    }
-
-
-    /**
-    * Creates an homogenous object for tracking events so users can know what to expect.
-    */
-    export class Event {
-
-
-        /**
-        * Creates an homogenous object for tracking events so users can know what to expect.
-        * 
-        * @param target The target object that the event is called on
-        * @param name The string name of the event that was triggered
-        * @param data Arbitrary event data to pass along
-        */
-        constructor(target: any, name: string, data: any);
-
-
-        /**
-        * The original target the event triggered on.
-        */
-        target: any;
-
-        /**
-        * The string name of the event that this represents.
-        */
-        type: string;
-
-        /**
-        * The data that was passed in with this event.
-        */
-        data: any;
-
-        /**
-        * The timestamp when the event occurred.
-        */
-        timeStamp: number;
-
-
-        /**
-        * Stops the propagation of events up the scene graph (prevents bubbling).
-        */
-        stopPropagation(): void;
-        preventDefault(): void;
-
-        /**
-        * Stops the propagation of events to sibling listeners (no longer calls any listeners).
-        */
-        stopImmediatePropagation(): void;
-
-    }
-
-
-    /**
-    * Mixins event emitter functionality to a class
-    */
-    export class EventTarget {
-
-
-        /**
-        * Mixes in the properties of the EventTarget prototype onto another object
-        * 
-        * @param object The obj to mix into
-        */
-        static mixin(obj: any): void;
 
     }
 
@@ -1080,267 +994,6 @@ declare module PIXI {
 
     }
 
-
-    /**
-    * A GraphicsData object.
-    */
-    export class GraphicsData {
-
-
-        /**
-        * A GraphicsData object.
-        */
-        constructor(lineWidth?: number, lineColor?: number, lineAlpha?: number, fillColor?: number, fillAlpha?: number, fill?: boolean, shape?: any);
-
-        lineWidth: number;
-        lineColor: number;
-        lineAlpha: number;
-        fillColor: number;
-        fillAlpha: number;
-        fill: boolean;
-        shape: any;
-        type: number;
-
-    }
-
-
-    /**
-    * The Graphics class contains methods used to draw primitive shapes such as lines, circles and rectangles to the display, and color and fill them.
-    */
-    export class Graphics extends DisplayObjectContainer {
-
-        static POLY: number;
-        static RECT: number;
-        static CIRC: number;
-        static ELIP: number;
-        static RREC: number;
-
-
-        /**
-        * The blend mode to be applied to the graphic shape. Apply a value of PIXI.blendModes.NORMAL to reset the blend mode.
-        * Default: PIXI.blendModes.NORMAL;
-        */
-        blendMode: number;
-
-        /**
-        * The bounds' padding used for bounds calculation.
-        */
-        boundsPadding: number;
-
-        /**
-        * The alpha value used when filling the Graphics object.
-        */
-        fillAlpha: number;
-
-        /**
-        * Whether this shape is being used as a mask.
-        */
-        isMask: boolean;
-
-        /**
-        * The width (thickness) of any lines drawn.
-        */
-        lineWidth: number;
-
-        /**
-        * The color of any lines drawn.
-        * Default: 0
-        */
-        lineColor: number;
-
-        /**
-        * The tint applied to the graphic shape. This is a hex value. Apply a value of 0xFFFFFF to reset the tint.
-        * Default: 0xFFFFFF
-        */
-        tint: number;
-        worldAlpha: number;
-
-
-        /**
-        * The arc method creates an arc/curve (used to create circles, or parts of circles).
-        * 
-        * @param cx The x-coordinate of the center of the circle
-        * @param cy The y-coordinate of the center of the circle
-        * @param radius The radius of the circle
-        * @param startAngle The starting angle, in radians (0 is at the 3 o'clock position of the arc's circle)
-        * @param endAngle The ending angle, in radians
-        * @param anticlockwise Optional. Specifies whether the drawing should be counterclockwise or clockwise. False is default, and indicates clockwise, while true indicates counter-clockwise.
-        * @param segments Optional. The number of segments to use when calculating the arc. The default is 40. If you need more fidelity use a higher number.
-        */
-        arc(cx: number, cy: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): Graphics;
-        arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): Graphics;
-
-        /**
-        * Specifies a simple one-color fill that subsequent calls to other Graphics methods
-        * (such as lineTo() or drawCircle()) use when drawing.
-        * 
-        * @param color the color of the fill
-        * @param alpha the alpha of the fill
-        */
-        beginFill(color?: number, alpha?: number): Graphics;
-
-        /**
-        * Calculate the points for a bezier curve and then draws it.
-        * 
-        * @param cpX Control point x
-        * @param cpY Control point y
-        * @param cpX2 Second Control point x
-        * @param cpY2 Second Control point y
-        * @param toX Destination point x
-        * @param toY Destination point y
-        */
-        bezierCurveTo(cpX: number, cpY: number, cpX2: number, cpY2: number, toX: number, toY: number): Graphics;
-
-        /**
-        * Clears the graphics that were drawn to this Graphics object, and resets fill and line style settings.
-        */
-        clear(): Graphics;
-
-        /**
-        * Destroys a previous cached sprite.
-        */
-        destroyCachedSprite(): void;
-
-        /**
-        * Draws a circle.
-        * 
-        * @param x The X coordinate of the center of the circle
-        * @param y The Y coordinate of the center of the circle
-        * @param diameter The diameter of the circle
-        */
-        drawCircle(x: number, y: number, diameter: number): Graphics;
-
-        /**
-        * Draws an ellipse.
-        * 
-        * @param x The X coordinate of the center of the ellipse
-        * @param y The Y coordinate of the center of the ellipse
-        * @param width The half width of the ellipse
-        * @param height The half height of the ellipse
-        */
-        drawEllipse(x: number, y: number, width: number, height: number): Graphics;
-
-        /**
-        * Draws a polygon using the given path.
-        * 
-        * @param path The path data used to construct the polygon. Can either be an array of points or a Phaser.Polygon object.
-        */
-        drawPolygon(...path: any[]): Graphics;
-
-        /**
-        * 
-        * 
-        * @param x The X coord of the top-left of the rectangle
-        * @param y The Y coord of the top-left of the rectangle
-        * @param width The width of the rectangle
-        * @param height The height of the rectangle
-        */
-        drawRect(x: number, y: number, width: number, height: number): Graphics;
-
-        /**
-        * 
-        * 
-        * @param x The X coord of the top-left of the rectangle
-        * @param y The Y coord of the top-left of the rectangle
-        * @param width The width of the rectangle
-        * @param height The height of the rectangle
-        * @param radius Radius of the rectangle corners. In WebGL this must be a value between 0 and 9.
-        */
-        drawRoundedRect(x: number, y: number, width: number, height: number, radius: number): Graphics;
-
-        /**
-        * Draws the given shape to this Graphics object. Can be any of Circle, Rectangle, Ellipse, Line or Polygon.
-        * 
-        * @param shape The Shape object to draw.
-        * @return The generated GraphicsData object.
-        */
-        drawShape(shape: Circle): GraphicsData;
-
-        /**
-        * Draws the given shape to this Graphics object. Can be any of Circle, Rectangle, Ellipse, Line or Polygon.
-        * 
-        * @param shape The Shape object to draw.
-        * @return The generated GraphicsData object.
-        */
-        drawShape(shape: Rectangle): GraphicsData;
-
-        /**
-        * Draws the given shape to this Graphics object. Can be any of Circle, Rectangle, Ellipse, Line or Polygon.
-        * 
-        * @param shape The Shape object to draw.
-        * @return The generated GraphicsData object.
-        */
-        drawShape(shape: Ellipse): GraphicsData;
-
-        /**
-        * Draws the given shape to this Graphics object. Can be any of Circle, Rectangle, Ellipse, Line or Polygon.
-        * 
-        * @param shape The Shape object to draw.
-        * @return The generated GraphicsData object.
-        */
-        drawShape(shape: Polygon): GraphicsData;
-
-        /**
-        * Applies a fill to the lines and shapes that were added since the last call to the beginFill() method.
-        */
-        endFill(): Graphics;
-
-        /**
-        * Useful function that returns a texture of the graphics object that can then be used to create sprites
-        * This can be quite useful if your geometry is complicated and needs to be reused multiple times.
-        * 
-        * @param resolution The resolution of the texture being generated - Default: 1
-        * @param scaleMode Should be one of the PIXI.scaleMode consts
-        * @param padding Add optional extra padding to the generated texture (default 0)
-        * @return a texture of the graphics object
-        */
-        generateTexture(resolution?: number, scaleMode?: number, padding?: number): RenderTexture;
-
-        /**
-        * Specifies the line style used for subsequent calls to Graphics methods such as the lineTo() method or the drawCircle() method.
-        * 
-        * @param lineWidth width of the line to draw, will update the objects stored style
-        * @param color color of the line to draw, will update the objects stored style
-        * @param alpha alpha of the line to draw, will update the objects stored style
-        */
-        lineStyle(lineWidth?: number, color?: number, alpha?: number): Graphics;
-
-        /**
-        * Draws a line using the current line style from the current drawing position to (x, y);
-        * The current drawing position is then set to (x, y).
-        * 
-        * @param x the X coordinate to draw to
-        * @param y the Y coordinate to draw to
-        */
-        lineTo(x: number, y: number): Graphics;
-
-        /**
-        * Moves the current drawing position to x, y.
-        * 
-        * @param x the X coordinate to move to
-        * @param y the Y coordinate to move to
-        */
-        moveTo(x: number, y: number): Graphics;
-
-        /**
-        * Calculate the points for a quadratic bezier curve and then draws it.
-        * Based on: https://stackoverflow.com/questions/785097/how-do-i-implement-a-bezier-curve-in-c
-        * 
-        * @param cpX Control point x
-        * @param cpY Control point y
-        * @param toX Destination point x
-        * @param toY Destination point y
-        */
-        quadraticCurveTo(cpX: number, cpY: number, toX: number, toY: number): Graphics;
-
-    }
-
-    export class GrayFilter extends AbstractFilter {
-
-        gray: number;
-
-    }
-
     export class ImageLoader implements Mixin {
 
         constructor(url: string, crossorigin?: boolean);
@@ -1371,56 +1024,7 @@ declare module PIXI {
 
     }
 
-    export class InteractionManager {
-
-        currentCursorStyle: string;
-        last: number;
-        mouse: InteractionData;
-        mouseOut: boolean;
-        mouseoverEnabled: boolean;
-        onMouseMove: Function;
-        onMouseDown: Function;
-        onMouseOut: Function;
-        onMouseUp: Function;
-        onTouchStart: Function;
-        onTouchEnd: Function;
-        onTouchMove: Function;
-        pool: InteractionData[];
-        resolution: number;
-        stage: DisplayObjectContainer;
-        touches: { [id: string]: InteractionData };
-
-        constructor(stage: DisplayObjectContainer);
-    }
-
-    export class InvertFilter extends AbstractFilter {
-
-        invert: number;
-
-    }
-
-    export class JsonLoader implements Mixin {
-
-        constructor(url: string, crossorigin?: boolean);
-
-        baseUrl: string;
-        crossorigin: boolean;
-        loaded: boolean;
-        url: string;
-
-        listeners(eventName: string): Function[];
-        emit(eventName: string, data?: any): boolean;
-        dispatchEvent(eventName: string, data?: any): boolean;
-        on(eventName: string, fn: Function): Function;
-        addEventListener(eventName: string, fn: Function): Function;
-        once(eventName: string, fn: Function): Function;
-        off(eventName: string, fn: Function): Function;
-        removeAllEventListeners(eventName: string): void;
-
-        load(): void;
-
-    }
-
+    // Phaser.Matrix is used instead
     export class Matrix {
 
         a: number;
@@ -1453,26 +1057,6 @@ declare module PIXI {
         once(eventName: string, fn: Function): Function;
         off(eventName: string, fn: Function): Function;
         removeAllEventListeners(eventName: string): void;
-
-    }
-
-    export class NoiseFilter extends AbstractFilter {
-
-        noise: number;
-
-    }
-
-    export class NormalMapFilter extends AbstractFilter {
-
-        map: Texture;
-        offset: Point;
-        scale: Point;
-
-    }
-
-    export class PixelateFilter extends AbstractFilter {
-
-        size: number;
 
     }
 
@@ -1730,6 +1314,7 @@ declare module PIXI {
 
     }
 
+    // Overwritten by Phaser.Point
     export class Point {
 
         constructor(x?: number, y?: number);
@@ -1742,39 +1327,36 @@ declare module PIXI {
 
     }
 
-    export class Polygon implements HitArea {
-
-        constructor(points: Point[]);
-        constructor(points: number[]);
-        constructor(...points: Point[]);
-        constructor(...points: number[]);
-
-        points: any[];
-
-        clone(): Polygon;
-        contains(x: number, y: number): boolean;
-
-    }
-
+    // Overwritten by Phaser.Rectangle
     export class Rectangle implements HitArea {
 
         constructor(x?: number, y?: number, width?: number, height?: number);
 
+        bottom: number;
+        bottomRight: Phaser.Point;
+        bottomLeft: Phaser.Point;
+        centerX: number;
+        centerY: number;
+        empty: boolean;
+        halfHeight: number;
+        halfWidth: number;
+        height: number;
+        left: number;
+        perimeter: number;
+        randomX: number;
+        randomY: number;
+        right: number;
+        top: number;
+        topLeft: Phaser.Point;
+        topRight: Phaser.Point;
+        type: number;
+        volume: number;
+        width: number;
         x: number;
         y: number;
-        width: number;
-        height: number;
 
         clone(): Rectangle;
         contains(x: number, y: number): boolean;
-
-    }
-
-    export class RGBSplitFilter extends AbstractFilter {
-
-        red: Point;
-        green: Point;
-        blue: Point;
 
     }
 
@@ -1783,74 +1365,10 @@ declare module PIXI {
         points: Point[];
         vertices: number[];
 
-
-        /**
-        * 
-        * 
-        * @param texture - The texture to use on the rope.
-        * @param points - An array of {PIXI.Point}.
-        */
         constructor(texture: Texture, points: Point[]);
 
         refresh(): void;
         setTexture(texture: Texture): void;
-
-    }
-
-    export class RoundedRectangle implements HitArea {
-
-        constructor(x?: number, y?: number, width?: number, height?: number, radius?: number);
-
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        radius: number;
-
-        clone(): RoundedRectangle;
-        contains(x: number, y: number): boolean;
-
-    }
-
-    export class SepiaFilter extends AbstractFilter {
-
-        sepia: number;
-
-    }
-
-    export class SmartBlurFilter extends AbstractFilter {
-
-        blur: number;
-
-    }
-
-    export class SpineLoader implements Mixin {
-
-        url: string;
-        crossorigin: boolean;
-        loaded: boolean;
-
-        constructor(url: string, crossOrigin: boolean);
-
-        listeners(eventName: string): Function[];
-        emit(eventName: string, data?: any): boolean;
-        dispatchEvent(eventName: string, data?: any): boolean;
-        on(eventName: string, fn: Function): Function;
-        addEventListener(eventName: string, fn: Function): Function;
-        once(eventName: string, fn: Function): Function;
-        off(eventName: string, fn: Function): Function;
-        removeAllEventListeners(eventName: string): void;
-
-        load(): void;
-
-    }
-
-    export class SpineTextureLoader {
-
-        constructor(basePath: string, crossorigin: boolean);
-
-        load(page: AtlasPage, file: string): void;
-        unload(texture: BaseTexture): void;
 
     }
 
@@ -1871,9 +1389,11 @@ declare module PIXI {
 
         /**
         * The anchor sets the origin point of the texture.
-        * The default is 0,0 this means the texture's origin is the top left
-        * Setting than anchor to 0.5,0.5 means the textures origin is centered
-        * Setting the anchor to 1,1 would mean the textures origin points will be the bottom right corner
+        * The default (0, 0) is the top left.
+        * (0.5, 0.5) is the center.
+        * (1, 1) is the bottom right.
+        * 
+        * You can modify the default values in PIXI.Sprite.defaultAnchor.
         */
         anchor: Point;
 
@@ -1886,7 +1406,7 @@ declare module PIXI {
         blendMode: blendModes;
 
         /**
-        * Controls if this Sprite is processed by the core Phaser game loops and Group loops.
+        * Controls if this Sprite is processed by the core Phaser game loops and Group loops (except {@link Phaser.Group#update}).
         * Default: true
         */
         exists: boolean;
@@ -1904,10 +1424,27 @@ declare module PIXI {
         texture: Texture;
 
         /**
-        * The tint applied to the sprite. This is a hex value. A value of 0xFFFFFF will remove any tint effect.
+        * The tint applied to the sprite. This is a hex value. A value of 0xFFFFFF (Phaser.Color.WHITE) will remove any tint effect.
         * Default: 0xFFFFFF
         */
         tint: number;
+
+
+        /**
+        * A Point-like object.
+        * Default: {"x":0,"y":0}
+        */
+
+                               /**
+                               * The horizontal position of the DisplayObject, in pixels, relative to its parent.
+                               * If you need the world position of the DisplayObject, use `DisplayObject.worldPosition` instead.
+                               */
+
+                                          /**
+                                          * The vertical position of the DisplayObject, in pixels, relative to its parent.
+                                          * If you need the world position of the DisplayObject, use `DisplayObject.worldPosition` instead.
+                                          */
+        static defaultAnchor: {x: number; y: number};
 
 
         /**
@@ -1921,69 +1458,14 @@ declare module PIXI {
 
     }
 
-
-    /**
-    * The SpriteBatch class is a really fast version of the DisplayObjectContainer
-    * built solely for speed, so use when you need a lot of sprites or particles.
-    * And it's extremely easy to use :
-    * 
-    *    var container = new PIXI.SpriteBatch();
-    * 
-    *    for(var i  = 0; i < 100; i++)
-    *    {
-    *        var sprite = new PIXI.Sprite.fromImage("myImage.png");
-    *        container.addChild(sprite);
-    *    }
-    * And here you have a hundred sprites that will be renderer at the speed of light
-    */
     export class SpriteBatch extends DisplayObjectContainer {
 
-
-        /**
-        * The SpriteBatch class is a really fast version of the DisplayObjectContainer
-        * built solely for speed, so use when you need a lot of sprites or particles.
-        * And it's extremely easy to use :
-        * 
-        *    var container = new PIXI.SpriteBatch();
-        * 
-        *    for(var i  = 0; i < 100; i++)
-        *    {
-        *        var sprite = new PIXI.Sprite.fromImage("myImage.png");
-        *        container.addChild(sprite);
-        *    }
-        * And here you have a hundred sprites that will be renderer at the speed of light
-        * 
-        * @param texture -
-        */
         constructor(texture?: Texture);
 
         ready: boolean;
         textureThing: Texture;
 
         initWebGL(gl: WebGLRenderingContext): void;
-
-    }
-
-    export class SpriteSheetLoader implements Mixin {
-
-        constructor(url: string, crossorigin?: boolean);
-
-        baseUrl: string;
-        crossorigin: boolean;
-        frames: any;
-        texture: Texture;
-        url: string;
-
-        listeners(eventName: string): Function[];
-        emit(eventName: string, data?: any): boolean;
-        dispatchEvent(eventName: string, data?: any): boolean;
-        on(eventName: string, fn: Function): Function;
-        addEventListener(eventName: string, fn: Function): Function;
-        once(eventName: string, fn: Function): Function;
-        off(eventName: string, fn: Function): Function;
-        removeAllEventListeners(eventName: string): void;
-
-        load(): void;
 
     }
 
@@ -1996,49 +1478,17 @@ declare module PIXI {
 
         };
 
-
-        /**
-        * 
-        * 
-        * @param texture The texture to use
-        * @param width the width
-        * @param height the height
-        */
         constructor(texture: Texture);
 
-
-        /**
-        * The blend mode to be applied to the sprite. Set to PIXI.blendModes.NORMAL to remove any blend mode.
-        * Default: PIXI.blendModes.NORMAL;
-        */
         blendMode: number;
         colors: number[];
-
-        /**
-        * Whether the strip is dirty or not
-        */
         dirty: boolean;
         indices: number[];
-
-        /**
-        * Triangles in canvas mode are automatically antialiased, use this value to force triangles to overlap a bit with each other.
-        */
         canvasPadding: number;
-
-        /**
-        * The texture of the strip
-        */
         texture: Texture;
         uvs: number[];
         vertices: number[];
 
-
-        /**
-        * Returns the bounds of the mesh as a rectangle. The bounds calculation takes the worldTransform into account.
-        * 
-        * @param matrix the transformation matrix of the sprite
-        * @return the framing rectangle
-        */
         getBounds(matrix?: Matrix): Rectangle;
 
     }
@@ -2121,6 +1571,13 @@ declare module PIXI {
         */
         valid: boolean;
 
+        /**
+        * A flag that controls if this frame is rotated or not.
+        * Rotation allows you to use rotated frames in texture atlas packing, it has nothing to do with
+        * Sprite rotation.
+        */
+        rotated: boolean;
+
         listeners(eventName: string): Function[];
         emit(eventName: string, data?: any): boolean;
         dispatchEvent(eventName: string, data?: any): boolean;
@@ -2147,135 +1604,24 @@ declare module PIXI {
 
     }
 
-
-    /**
-    * A tiling sprite is a fast way of rendering a tiling image
-    */
     export class TilingSprite extends Sprite {
 
-
-        /**
-        * A tiling sprite is a fast way of rendering a tiling image
-        * 
-        * @param texture the texture of the tiling sprite
-        * @param width the width of the tiling sprite
-        * @param height the height of the tiling sprite
-        */
         constructor(texture: Texture, width: number, height: number);
 
-
-        /**
-        * The CanvasBuffer object that the tiled texture is drawn to.
-        */
         canvasBuffer: PIXI.CanvasBuffer;
-
-        /**
-        * The blend mode to be applied to the sprite
-        * Default: PIXI.blendModes.NORMAL;
-        */
         blendMode: number;
-
-        /**
-        * If true the TilingSprite will run generateTexture on its **next** render pass.
-        * This is set by the likes of Phaser.LoadTexture.setFrame.
-        * Default: true
-        */
         refreshTexture: boolean;
-
-        /**
-        * The texture that the sprite is using
-        */
         texture: Texture;
-
-        /**
-        * If enabled a green rectangle will be drawn behind the generated tiling texture, allowing you to visually
-        * debug the texture being used.
-        */
         textureDebug: boolean;
-
-        /**
-        * The tint applied to the sprite. This is a hex value
-        * Default: 0xFFFFFF
-        */
         tint: number;
-
-        /**
-        * The offset position of the image that is being tiled
-        */
         tilePosition: Point;
-
-        /**
-        * The Context fill pattern that is used to draw the TilingSprite in Canvas mode only (will be null in WebGL).
-        */
         tilePattern: PIXI.Texture;
-
-        /**
-        * The scaling of the image that is being tiled
-        */
         tileScale: Point;
-
-        /**
-        * A point that represents the scale of the texture object
-        */
         tileScaleOffset: Point;
 
         destroy(): void;
-
-        /**
-        * 
-        * 
-        * @param forcePowerOfTwo Whether we want to force the texture to be a power of two
-        * @param renderSession -
-        */
         generateTilingTexture(forcePowerOfTwo?: boolean): void;
-
-        /**
-        * Sets the texture of the sprite. Be warned that this doesn't remove or destroy the previous
-        * texture this Sprite was using.
-        * 
-        * @param texture The PIXI texture that is displayed by the sprite
-        * @param destroy Call Texture.destroy on the current texture before replacing it with the new one?
-        */
         setTexture(texture: Texture): void;
-
-    }
-
-    export class TiltShiftFilter extends AbstractFilter {
-
-        blur: number;
-        gradientBlur: number;
-        start: number;
-        end: number;
-
-    }
-
-    export class TiltShiftXFilter extends AbstractFilter {
-
-        blur: number;
-        gradientBlur: number;
-        start: number;
-        end: number;
-
-        updateDelta(): void;
-
-    }
-
-    export class TiltShiftYFilter extends AbstractFilter {
-
-        blur: number;
-        gradientBlur: number;
-        start: number;
-        end: number;
-
-        updateDelta(): void;
-
-    }
-
-    export class TwistFilter extends AbstractFilter {
-
-        angle: number;
-        offset: Point;
-        radius: number;
 
     }
 
@@ -2360,8 +1706,8 @@ declare module PIXI {
         /**
         * 
         * 
-        * @param spriteBatch -
-        * @param renderSession -
+        * @param spriteBatch
+        * @param renderSession
         */
         begin(spriteBatch: SpriteBatch, renderSession: RenderSession): void;
         destroy(removeView?: boolean): void;
@@ -2370,14 +1716,14 @@ declare module PIXI {
         /**
         * 
         * 
-        * @param spriteBatch -
+        * @param spriteBatch
         */
         render(spriteBatch: SpriteBatch): void;
 
         /**
         * 
         * 
-        * @param sprite -
+        * @param sprite
         */
         renderSprite(sprite: Sprite): void;
 
@@ -2413,8 +1759,8 @@ declare module PIXI {
         /**
         * 
         * 
-        * @param renderSession -
-        * @param buffer -
+        * @param renderSession
+        * @param buffer
         */
         begin(renderSession: RenderSession, buffer: ArrayBuffer): void;
 
@@ -2461,10 +1807,10 @@ declare module PIXI {
         /**
         * Renders the graphics object
         * 
-        * @param graphics -
-        * @param renderSession -
+        * @param graphics
+        * @param renderSession
         */
-        static renderGraphics(graphics: Graphics, renderRession: RenderSession): void;
+        static renderGraphics(graphics: Phaser.Graphics, renderRession: RenderSession): void;
 
         /**
         * Updates the graphics object
@@ -2472,13 +1818,13 @@ declare module PIXI {
         * @param graphicsData The graphics object to update
         * @param gl the current WebGL drawing context
         */
-        static updateGraphics(graphics: Graphics, gl: WebGLRenderingContext): void;
+        static updateGraphics(graphics: Phaser.Graphics, gl: WebGLRenderingContext): void;
 
         /**
         * 
         * 
-        * @param webGL -
-        * @param type -
+        * @param webGL
+        * @param type
         */
         static switchMode(webGL: WebGLRenderingContext, type: number): any;
 
@@ -2486,17 +1832,17 @@ declare module PIXI {
         * Builds a rectangle to draw
         * 
         * @param graphicsData The graphics object containing all the necessary properties
-        * @param webGLData -
+        * @param webGLData
         */
-        static buildRectangle(graphicsData: GraphicsData, webGLData: any): void;
+        static buildRectangle(graphicsData: Phaser.GraphicsData, webGLData: any): void;
 
         /**
         * Builds a rounded rectangle to draw
         * 
         * @param graphicsData The graphics object containing all the necessary properties
-        * @param webGLData -
+        * @param webGLData
         */
-        static buildRoundedRectangle(graphicsData: GraphicsData, webGLData: any): void;
+        static buildRoundedRectangle(graphicsData: Phaser.GraphicsData, webGLData: any): void;
 
         /**
         * Calculate the points for a quadratic bezier curve. (helper function..)
@@ -2515,33 +1861,33 @@ declare module PIXI {
         * Builds a circle to draw
         * 
         * @param graphicsData The graphics object to draw
-        * @param webGLData -
+        * @param webGLData
         */
-        static buildCircle(graphicsData: GraphicsData, webGLData: any): void;
+        static buildCircle(graphicsData: Phaser.GraphicsData, webGLData: any): void;
 
         /**
         * Builds a line to draw
         * 
         * @param graphicsData The graphics object containing all the necessary properties
-        * @param webGLData -
+        * @param webGLData
         */
-        static buildLine(graphicsData: GraphicsData, webGLData: any): void;
+        static buildLine(graphicsData: Phaser.GraphicsData, webGLData: any): void;
 
         /**
         * Builds a complex polygon to draw
         * 
         * @param graphicsData The graphics object containing all the necessary properties
-        * @param webGLData -
+        * @param webGLData
         */
-        static buildComplexPoly(graphicsData: GraphicsData, webGLData: any): void;
+        static buildComplexPoly(graphicsData: Phaser.GraphicsData, webGLData: any): void;
 
         /**
         * Builds a polygon to draw
         * 
         * @param graphicsData The graphics object containing all the necessary properties
-        * @param webGLData -
+        * @param webGLData
         */
-        static buildPoly(graphicsData: GraphicsData, webGLData: any): boolean;
+        static buildPoly(graphicsData: Phaser.GraphicsData, webGLData: any): boolean;
 
         reset(): void;
         upload(): void;
@@ -2579,7 +1925,7 @@ declare module PIXI {
         /**
         * Removes the last filter from the filter stack and doesn't return it.
         * 
-        * @param maskData -
+        * @param maskData
         * @param renderSession an object containing all the useful parameters
         */
         popMask(renderSession: RenderSession): void;
@@ -2587,8 +1933,8 @@ declare module PIXI {
         /**
         * Applies the Mask and adds it to the current filter stack.
         * 
-        * @param maskData -
-        * @param renderSession -
+        * @param maskData
+        * @param renderSession
         */
         pushMask(maskData: any[], renderSession: RenderSession): void;
 
@@ -2623,6 +1969,10 @@ declare module PIXI {
         */
         constructor(game: Phaser.Game);
 
+
+        /**
+        * A reference to the Phaser Game instance.
+        */
         game: Phaser.Game;
         type: number;
 
@@ -2664,6 +2014,7 @@ declare module PIXI {
         * The height of the canvas view
         */
         height: number;
+        currentBatchedTextures: string[];
 
         /**
         * The canvas element that everything is drawn to
@@ -2747,6 +2098,30 @@ declare module PIXI {
         */
         mapBlendModes(): void;
 
+        /**
+        * If Multi Texture support has been enabled, then calling this method will enable batching on the given
+        * textures. The texture collection is an array of keys, that map to Phaser.Cache image entries.
+        * 
+        * The number of textures that can be batched is dependent on hardware. If you provide more textures
+        * than can be batched by the GPU, then only those at the start of the array will be used. Generally
+        * you shouldn't provide more than 16 textures to this method. You can check the hardware limit via the
+        * `maxTextures` property.
+        * 
+        * You can also check the property `currentBatchedTextures` at any time, to see which textures are currently
+        * being batched.
+        * 
+        * To stop all textures from being batched, call this method again with an empty array.
+        * 
+        * To change the textures being batched, call this method with a new array of image keys. The old ones
+        * will all be purged out and no-longer batched, and the new ones enabled.
+        * 
+        * Note: Throws a warning if you haven't enabled Multiple Texture batching support in the Phaser Game config.
+        * 
+        * @param textureNameCollection An Array of Texture Cache keys to use for multi-texture batching.
+        * @return An array containing the texture keys that were enabled for batching.
+        */
+        setTexturePriority(textureNameCollection: string[]): string[];
+
     }
 
     export class WebGLShaderManager {
@@ -2779,7 +2154,7 @@ declare module PIXI {
         /**
         * Sets the current shader.
         * 
-        * @param shader -
+        * @param shader
         */
         setShader(shader: IPixiShader): boolean;
 
@@ -2795,11 +2170,11 @@ declare module PIXI {
         /**
         * TODO this does not belong here!
         * 
-        * @param graphics -
-        * @param webGLData -
-        * @param renderSession -
+        * @param graphics
+        * @param webGLData
+        * @param renderSession
         */
-        bindGraphics(graphics: Graphics, webGLData: any[], renderSession: RenderSession): void;
+        bindGraphics(graphics: Phaser.Graphics, webGLData: any[], renderSession: RenderSession): void;
 
         /**
         * Destroys the mask stack.
@@ -2809,12 +2184,12 @@ declare module PIXI {
         /**
         * 
         * 
-        * @param graphics -
-        * @param webGLData -
-        * @param renderSession -
+        * @param graphics
+        * @param webGLData
+        * @param renderSession
         */
-        popStencil(graphics: Graphics, webGLData: any[], renderSession: RenderSession): void;
-        pushStencil(graphics: Graphics, webGLData: any[], renderSession: RenderSession): void;
+        popStencil(graphics: Phaser.Graphics, webGLData: any[], renderSession: RenderSession): void;
+        pushStencil(graphics: Phaser.Graphics, webGLData: any[], renderSession: RenderSession): void;
 
         /**
         * Sets the drawing context to the one given in parameter.
@@ -2887,16 +2262,16 @@ declare module PIXI {
         * 
         * 
         * @param sprite the sprite to render when using this spritebatch
-        * @param matrix - Optional matrix. If provided the Display Object will be rendered using this matrix, otherwise it will use its worldTransform.
+        * @param matrix Optional matrix. If provided the Display Object will be rendered using this matrix, otherwise it will use its worldTransform.
         */
         render(sprite: Sprite): void;
 
         /**
         * 
         * 
-        * @param texture -
-        * @param size -
-        * @param startIndex -
+        * @param texture
+        * @param size
+        * @param startIndex
         */
         renderBatch(texture: Texture, size: number, startIndex: number): void;
 
@@ -2916,562 +2291,6 @@ declare module PIXI {
         setContext(gl: WebGLRenderingContext): void;
         start(): void;
         stop(): void;
-
-    }
-
-
-    /**
-    * A RenderTexture is a special texture that allows any Pixi display object to be rendered to it.
-    * 
-    * __Hint__: All DisplayObjects (i.e. Sprites) that render to a RenderTexture should be preloaded otherwise black rectangles will be drawn instead.
-    * 
-    * A RenderTexture takes a snapshot of any Display Object given to its render method. The position and rotation of the given Display Objects is ignored. For example:
-    * 
-    *    var renderTexture = new PIXI.RenderTexture(800, 600);
-    *    var sprite = PIXI.Sprite.fromImage("spinObj_01.png");
-    *    sprite.position.x = 800/2;
-    *    sprite.position.y = 600/2;
-    *    sprite.anchor.x = 0.5;
-    *    sprite.anchor.y = 0.5;
-    *    renderTexture.render(sprite);
-    * 
-    * The Sprite in this case will be rendered to a position of 0,0. To render this sprite at its actual position a DisplayObjectContainer should be used:
-    * 
-    *    var doc = new PIXI.DisplayObjectContainer();
-    *    doc.addChild(sprite);
-    *    renderTexture.render(doc);  // Renders to center of renderTexture
-    */
-    export class RenderTexture extends Texture {
-
-
-        /**
-        * A RenderTexture is a special texture that allows any Pixi display object to be rendered to it.
-        * 
-        * __Hint__: All DisplayObjects (i.e. Sprites) that render to a RenderTexture should be preloaded otherwise black rectangles will be drawn instead.
-        * 
-        * A RenderTexture takes a snapshot of any Display Object given to its render method. The position and rotation of the given Display Objects is ignored. For example:
-        * 
-        *    var renderTexture = new PIXI.RenderTexture(800, 600);
-        *    var sprite = PIXI.Sprite.fromImage("spinObj_01.png");
-        *    sprite.position.x = 800/2;
-        *    sprite.position.y = 600/2;
-        *    sprite.anchor.x = 0.5;
-        *    sprite.anchor.y = 0.5;
-        *    renderTexture.render(sprite);
-        * 
-        * The Sprite in this case will be rendered to a position of 0,0. To render this sprite at its actual position a DisplayObjectContainer should be used:
-        * 
-        *    var doc = new PIXI.DisplayObjectContainer();
-        *    doc.addChild(sprite);
-        *    renderTexture.render(doc);  // Renders to center of renderTexture
-        * 
-        * @param width The width of the render texture
-        * @param height The height of the render texture
-        * @param renderer The renderer used for this RenderTexture
-        * @param scaleMode See {{#crossLink "PIXI/scaleModes:property"}}PIXI.scaleModes{{/crossLink}} for possible values
-        * @param resolution The resolution of the texture being generated
-        */
-        constructor(width?: number, height?: number, renderer?: PixiRenderer, scaleMode?: scaleModes, resolution?: number);
-
-
-        /**
-        * The framing rectangle of the render texture
-        */
-        frame: Rectangle;
-
-        /**
-        * The base texture object that this texture uses
-        */
-        baseTexture: BaseTexture;
-
-        /**
-        * The renderer this RenderTexture uses. A RenderTexture can only belong to one renderer at the moment if its webGL.
-        */
-        renderer: PixiRenderer;
-
-        /**
-        * The Resolution of the texture.
-        */
-        resolution: number;
-        valid: boolean;
-
-
-        /**
-        * Clears the RenderTexture.
-        */
-        clear(): void;
-
-        /**
-        * Will return a base64 encoded string of this texture. It works by calling RenderTexture.getCanvas and then running toDataURL on that.
-        * @return A base64 encoded string of the texture.
-        */
-        getBase64(): string;
-
-        /**
-        * Creates a Canvas element, renders this RenderTexture to it and then returns it.
-        * @return A Canvas element with the texture rendered on.
-        */
-        getCanvas(): HTMLCanvasElement;
-
-        /**
-        * Will return a HTML Image of the texture
-        */
-        getImage(): HTMLImageElement;
-
-        /**
-        * Resizes the RenderTexture.
-        * 
-        * @param width The width to resize to.
-        * @param height The height to resize to.
-        * @param updateBase Should the baseTexture.width and height values be resized as well?
-        */
-        resize(width: number, height: number, updateBase: boolean): void;
-        render(displayObject: DisplayObject, matrix?: Matrix, clear?: boolean): void;
-
-    }
-
-    // SPINE
-
-    export class BoneData {
-
-        constructor(name: string, parent?: any);
-
-        name: string;
-        parent: any;
-        length: number;
-        x: number;
-        y: number;
-        rotation: number;
-        scaleX: number;
-        scaleY: number;
-
-    }
-
-    export class SlotData {
-
-        constructor(name: string, boneData: BoneData);
-
-        name: string;
-        boneData: BoneData;
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-        attachmentName: string;
-
-    }
-
-    export class Bone {
-
-        constructor(boneData: BoneData, parent?: any);
-
-        data: BoneData;
-        parent: any;
-        yDown: boolean;
-        x: number;
-        y: number;
-        rotation: number;
-        scaleX: number;
-        scaleY: number;
-        worldRotation: number;
-        worldScaleX: number;
-        worldScaleY: number;
-
-        updateWorldTransform(flipX: boolean, flip: boolean): void;
-        setToSetupPose(): void;
-
-    }
-
-    export class Slot {
-
-        constructor(slotData: SlotData, skeleton: Skeleton, bone: Bone);
-
-        data: SlotData;
-        skeleton: Skeleton;
-        bone: Bone;
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-        attachment: RegionAttachment;
-        setAttachment(attachment: RegionAttachment): void;
-        setAttachmentTime(time: number): void;
-        getAttachmentTime(): number;
-        setToSetupPose(): void;
-
-    }
-
-    export class Skin {
-
-        constructor(name: string);
-
-        name: string;
-        attachments: any;
-
-        addAttachment(slotIndex: number, name: string, attachment: RegionAttachment): void;
-        getAttachment(slotIndex: number, name: string): void;
-
-    }
-
-    export class Animation {
-
-        constructor(name: string, timelines: ISpineTimeline[], duration: number);
-
-        name: string;
-        timelines: ISpineTimeline[];
-        duration: number;
-        apply(skeleton: Skeleton, time: number, loop: boolean): void;
-        min(skeleton: Skeleton, time: number, loop: boolean, alpha: number): void;
-
-    }
-
-    export class Curves {
-
-        constructor(frameCount: number);
-
-        curves: number[];
-
-        setLinear(frameIndex: number): void;
-        setStepped(frameIndex: number): void;
-        setCurve(frameIndex: number, cx1: number, cy1: number, cx2: number, cy2: number): void;
-        getCurvePercent(frameIndex: number, percent: number): number;
-
-    }
-
-    export interface ISpineTimeline {
-
-        curves: Curves;
-        frames: number[];
-
-        getFrameCount(): number;
-        apply(skeleton: Skeleton, time: number, alpha: number): void;
-
-    }
-
-    export class RotateTimeline implements ISpineTimeline {
-
-        constructor(frameCount: number);
-
-        curves: Curves;
-        frames: number[];
-        boneIndex: number;
-
-        getFrameCount(): number;
-        setFrame(frameIndex: number, time: number, angle: number): void;
-        apply(skeleton: Skeleton, time: number, alpha: number): void;
-
-    }
-
-    export class TranslateTimeline implements ISpineTimeline {
-
-        constructor(frameCount: number);
-
-        curves: Curves;
-        frames: number[];
-        boneIndex: number;
-
-        getFrameCount(): number;
-        setFrame(frameIndex: number, time: number, x: number, y: number): void;
-        apply(skeleton: Skeleton, time: number, alpha: number): void;
-
-    }
-
-    export class ScaleTimeline implements ISpineTimeline {
-
-        constructor(frameCount: number);
-
-        curves: Curves;
-        frames: number[];
-        boneIndex: number;
-
-        getFrameCount(): number;
-        setFrame(frameIndex: number, time: number, x: number, y: number): void;
-        apply(skeleton: Skeleton, time: number, alpha: number): void;
-
-    }
-
-    export class ColorTimeline implements ISpineTimeline {
-
-        constructor(frameCount: number);
-
-        curves: Curves;
-        frames: number[];
-        boneIndex: number;
-
-        getFrameCount(): number;
-        setFrame(frameIndex: number, time: number, r: number, g: number, b: number, a: number): void;
-        apply(skeleton: Skeleton, time: number, alpha: number): void;
-
-    }
-
-    export class AttachmentTimeline implements ISpineTimeline {
-
-        constructor(frameCount: number);
-
-        curves: Curves;
-        frames: number[];
-        attachmentNames: string[];
-        slotIndex: number;
-
-        getFrameCount(): number;
-        setFrame(frameIndex: number, time: number, attachmentName: string): void;
-        apply(skeleton: Skeleton, time: number, alpha: number): void;
-
-    }
-
-    export class SkeletonData {
-
-        bones: Bone[];
-        slots: Slot[];
-        skins: Skin[];
-        animations: Animation[];
-        defaultSkin: Skin;
-
-        findBone(boneName: string): Bone;
-        findBoneIndex(boneName: string): number;
-        findSlot(slotName: string): Slot;
-        findSlotIndex(slotName: string): number;
-        findSkin(skinName: string): Skin;
-        findAnimation(animationName: string): Animation;
-
-    }
-
-    export class Skeleton {
-
-        constructor(skeletonData: SkeletonData);
-
-        data: SkeletonData;
-        bones: Bone[];
-        slots: Slot[];
-        drawOrder: any[];
-        x: number;
-        y: number;
-        skin: Skin;
-        r: number;
-        g: number;
-        b: number;
-        a: number;
-        time: number;
-        flipX: boolean;
-        flipY: boolean;
-
-        updateWorldTransform(): void;
-        setToSetupPose(): void;
-        setBonesToSetupPose(): void;
-        setSlotsToSetupPose(): void;
-        getRootBone(): Bone;
-        findBone(boneName: string): Bone;
-        fineBoneIndex(boneName: string): number;
-        findSlot(slotName: string): Slot;
-        findSlotIndex(slotName: string): number;
-        setSkinByName(skinName: string): void;
-        setSkin(newSkin: Skin): void;
-        getAttachmentBySlotName(slotName: string, attachmentName: string): RegionAttachment;
-        getAttachmentBySlotIndex(slotIndex: number, attachmentName: string): RegionAttachment;
-        setAttachment(slotName: string, attachmentName: string): void;
-        update(data: number): void;
-
-    }
-
-    export class RegionAttachment {
-
-        offset: number[];
-        uvs: number[];
-        x: number;
-        y: number;
-        rotation: number;
-        scaleX: number;
-        scaleY: number;
-        width: number;
-        height: number;
-        rendererObject: any;
-        regionOffsetX: number;
-        regionOffsetY: number;
-        regionWidth: number;
-        regionHeight: number;
-        regionOriginalWidth: number;
-        regionOriginalHeight: number;
-
-        setUVs(u: number, v: number, u2: number, v2: number, rotate: number): void;
-        updateOffset(): void;
-        computeVertices(x: number, y: number, bone: Bone, vertices: number[]): void;
-
-    }
-
-    export class AnimationStateData {
-
-        constructor(skeletonData: SkeletonData);
-
-        skeletonData: SkeletonData;
-        animationToMixTime: any;
-        defaultMix: number;
-
-        setMixByName(fromName: string, toName: string, duration: number): void;
-        setMix(from: string, to: string): number;
-
-    }
-
-    export class AnimationState {
-
-        constructor(stateData: any);
-
-        animationSpeed: number;
-        current: any;
-        previous: any;
-        currentTime: number;
-        previousTime: number;
-        currentLoop: boolean;
-        previousLoop: boolean;
-        mixTime: number;
-        mixDuration: number;
-        queue: Animation[];
-
-        update(delta: number): void;
-        apply(skeleton: any): void;
-        clearAnimation(): void;
-        setAnimation(animation: any, loop: boolean): void;
-        setAnimationByName(animationName: string, loop: boolean): void;
-        addAnimationByName(animationName: string, loop: boolean, delay: number): void;
-        addAnimation(animation: any, loop: boolean, delay: number): void;
-        isComplete(): number;
-
-    }
-
-    export class SkeletonJson {
-
-        constructor(attachmentLoader: AtlasAttachmentLoader);
-
-        attachmentLoader: AtlasAttachmentLoader;
-        scale: number;
-
-        readSkeletonData(root: any): SkeletonData;
-        readAttachment(skin: Skin, name: string, map: any): RegionAttachment;
-        readAnimation(name: string, map: any, skeletonData: SkeletonData): void;
-        readCurve(timeline: ISpineTimeline, frameIndex: number, valueMap: any): void;
-        toColor(hexString: string, colorIndex: number): number;
-
-    }
-
-    export class Atlas {
-
-        static FORMAT: {
-
-            alpha: number;
-            intensity: number;
-            luminanceAlpha: number;
-            rgb565: number;
-            rgba4444: number;
-            rgb888: number;
-            rgba8888: number;
-
-        };
-
-        static TextureFilter: {
-
-            nearest: number;
-            linear: number;
-            mipMap: number;
-            mipMapNearestNearest: number;
-            mipMapLinearNearest: number;
-            mipMapNearestLinear: number;
-            mipMapLinearLinear: number;
-
-        };
-
-        static textureWrap: {
-
-            mirroredRepeat: number;
-            clampToEdge: number;
-            repeat: number;
-
-        };
-
-        constructor(atlasText: string, textureLoader: AtlasLoader);
-
-        textureLoader: AtlasLoader;
-        pages: AtlasPage[];
-        regions: AtlasRegion[];
-
-        findRegion(name: string): AtlasRegion;
-        dispose(): void;
-        updateUVs(page: AtlasPage): void;
-
-    }
-
-    export class AtlasPage {
-
-        name: string;
-        format: number;
-        minFilter: number;
-        magFilter: number;
-        uWrap: number;
-        vWrap: number;
-        rendererObject: any;
-        width: number;
-        height: number;
-
-    }
-
-    export class AtlasRegion {
-
-        page: AtlasPage;
-        name: string;
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        u: number;
-        v: number;
-        u2: number;
-        v2: number;
-        offsetX: number;
-        offsetY: number;
-        originalWidth: number;
-        originalHeight: number;
-        index: number;
-        rotate: boolean;
-        splits: any[];
-        pads: any[];
-
-    }
-
-    export class AtlasReader {
-
-        constructor(text: string);
-
-        lines: string[];
-        index: number;
-
-        trim(value: string): string;
-        readLine(): string;
-        readValue(): string;
-        readTuple(tuple: number): number;
-
-    }
-
-    export class AtlasAttachmentLoader {
-
-        constructor(atlas: Atlas);
-
-        atlas: Atlas;
-
-        newAttachment(skin: Skin, type: number, name: string): RegionAttachment;
-
-    }
-
-    export class Spine extends DisplayObjectContainer {
-
-        constructor(url: string);
-
-        autoUpdate: boolean;
-        spineData: any;
-        skeleton: Skeleton;
-        stateData: AnimationStateData;
-        state: AnimationState;
-        slotContainers: DisplayObjectContainer[];
-
-        createSprite(slot: Slot, descriptor: { name: string }): Sprite[];
-        update(dt: number): void;
 
     }
 

@@ -3,12 +3,13 @@ module.exports = {
 	"env": {
 		"browser": true,
 		"node": true,
-		"es6": true
+		"es6": true,
 	},
 	"globals": {
 		"Phaser": true,
 		"LP": true,
 		"imageLoader": true,
+		"soundLoader": true,
 		"localization": true,
 		"wrapper_mark_cta": true,
 		"wrapper_click_go": true,
@@ -28,11 +29,23 @@ module.exports = {
 		"require": true,
 		"module": true,
 		"__dirname": true,
-		"analytics": true
+		"analytics": true,
 	},
 	"rules": {
 		"linebreak-style": 0,
 		"import/no-absolute-path": false,
-		"import/no-unresolved": false
+		"import/no-unresolved": false,
+		"no-multi-assign": 0,
+		"camelcase": 0,
+		"no-param-reassign": 0,
+		"no-plusplus": 0,
+		"no-underscore-dangle": 0,
+		"comma-dangle": ["error", {
+			"arrays": "always-multiline",
+			"objects": "always-multiline",
+			"imports": "always-multiline",
+			"exports": "always-multiline",
+			"functions": "ignore"
+		}],
 	}
 };

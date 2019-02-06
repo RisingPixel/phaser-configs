@@ -3,8 +3,7 @@ A list of useful configuration files for bootstrapping phaser projects.
 
 
 ## Typings
-If you want code suggestion for Phaserjs and other libraries, just copy the defs folder file inside your project. VSCode will automatically suggest syntax.
-
+If you want code suggestion for Phaserjs and other libraries, just copy the `defs` folder and `jsconfig.json` file inside your project. VSCode will automatically suggest syntax.
 
 ## ESLint
 For styling we need to use ESLint following this tutorial steps.
