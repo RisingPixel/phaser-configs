@@ -5,4 +5,5 @@ declare class imageLoader {
   static registerBackgroundImage(imageUrl: string, imageWidth: number, imageHeight: number);
   static preloadBackground();
   static hasFrameName(frameName: string): boolean;
+  static loadImage(name: string, imgpath: string): Phaser.Loader;
 }
